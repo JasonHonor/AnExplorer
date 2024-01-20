@@ -16,6 +16,10 @@
 
 package dev.dworks.apps.anexplorer.model;
 
+import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorInt;
+import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorLong;
+import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorString;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,6 +29,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -52,10 +57,6 @@ import dev.dworks.apps.anexplorer.provider.RecentsProvider;
 import dev.dworks.apps.anexplorer.provider.RootedStorageProvider;
 import dev.dworks.apps.anexplorer.provider.UsbStorageProvider;
 import dev.dworks.apps.anexplorer.transfer.TransferHelper;
-
-import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorInt;
-import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorLong;
-import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorString;
 
 /**
  * Representation of a {@link Root}.
@@ -377,8 +378,14 @@ public class RootInfo implements Durable, Parcelable {
     }
 
     public boolean isPhoneStorage() {
-        return ExternalStorageProvider.AUTHORITY.equals(authority)
-                && ExternalStorageProvider.ROOT_ID_DEVICE.equals(rootId);
+        Log.d("RootInfo","After isPhoneStorage "+this.path);
+        boolean bRet1 = ExternalStorageProvider.AUTHORITY.equals(authority);
+        boolean bRet2 = ExternalStorageProvider.ROOT_ID_DEVICE.equals(rootId) || ExternalStorageProvider.ROOT_ID_FS.equals(rootId);
+        return bRet1 && bRet2;
+        //if((this.path!=null && this.path.equals("/sdcard")
+        //        || bRet1 && bRet2 )
+        //) return  true;
+        //return false;
     }
     
     public boolean isSecondaryStorage() {

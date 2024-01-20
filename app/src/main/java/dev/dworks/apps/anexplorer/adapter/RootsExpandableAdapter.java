@@ -1,7 +1,10 @@
 package dev.dworks.apps.anexplorer.adapter;
 
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
+
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -16,8 +19,6 @@ import dev.dworks.apps.anexplorer.fragment.RootsFragment.Item;
 import dev.dworks.apps.anexplorer.fragment.RootsFragment.RootItem;
 import dev.dworks.apps.anexplorer.model.GroupInfo;
 import dev.dworks.apps.anexplorer.model.RootInfo;
-
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
 
 public class RootsExpandableAdapter extends BaseExpandableListAdapter {
 
@@ -51,7 +52,21 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
         final List<Item> messengers = new ArrayList<>();
         final List<Item> cast = new ArrayList<>();
 
+       /* var root1 = new RootInfo();
+        root1.authority = "dev.dworks.apps.anexplorer.externalstorage.documents";
+        root1.rootId="sdcard";
+        root1.derivedTag="sdcard";
+        root1.documentId="sdcard:";
+        root1.path="/sdcard";
+        root1.rootId="sdcard";
+        root1.title="sdcard";
+        roots.add(root1);*/
+
         for (RootInfo root : roots) {
+
+            Log.d("RootsExpand","After expand root "+ root.rootId);
+            if(root.path!=null) Log.d("RootsExpand","After expand root-path "+ root.path);
+
             if (root.isHome()) {
                 home.add(new RootItem(root));
             } else if (root.isRecents()) {
@@ -69,6 +84,7 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
             } else if (root.isRootedStorage()) {
                 rooted.add(new RootItem(root));
             } else if (root.isPhoneStorage()) {
+                if(root.rootId!=null) Log.d("RootsExpand","After expand add "+ root.rootId);
                 phone.add(new RootItem(root));
             } else if (root.isAppBackupFolder()) {
                 appbackup.add(new RootItem(root));

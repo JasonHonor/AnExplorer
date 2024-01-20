@@ -17,6 +17,11 @@
 
 package dev.dworks.apps.anexplorer.provider;
 
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isTelevision;
+import static dev.dworks.apps.anexplorer.misc.FileUtils.getTypeForFile;
+import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorString;
+import static dev.dworks.apps.anexplorer.provider.UsbStorageProvider.ROOT_ID_USB;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
@@ -37,15 +42,16 @@ import android.support.provider.DocumentFile;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.GuardedBy;
+import androidx.collection.ArrayMap;
+import androidx.core.os.EnvironmentCompat;
+import androidx.core.util.Pair;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import androidx.annotation.GuardedBy;
-import androidx.collection.ArrayMap;
-import androidx.core.os.EnvironmentCompat;
-import androidx.core.util.Pair;
 import dev.dworks.apps.anexplorer.BuildConfig;
 import dev.dworks.apps.anexplorer.DocumentsApplication;
 import dev.dworks.apps.anexplorer.R;
@@ -66,11 +72,6 @@ import dev.dworks.apps.anexplorer.model.DocumentsContract;
 import dev.dworks.apps.anexplorer.model.DocumentsContract.Document;
 import dev.dworks.apps.anexplorer.model.DocumentsContract.Root;
 import dev.dworks.apps.anexplorer.setting.SettingsActivity;
-
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isTelevision;
-import static dev.dworks.apps.anexplorer.misc.FileUtils.getTypeForFile;
-import static dev.dworks.apps.anexplorer.model.DocumentInfo.getCursorString;
-import static dev.dworks.apps.anexplorer.provider.UsbStorageProvider.ROOT_ID_USB;
 
 @SuppressLint("DefaultLocale")
 public class ExternalStorageProvider extends StorageProvider {
@@ -113,6 +114,8 @@ public class ExternalStorageProvider extends StorageProvider {
     public static final String ROOT_ID_RECIEVE_FLES = "receive_files";
     public static final String ROOT_ID_HIDDEN = "hidden";
     public static final String ROOT_ID_BOOKMARK = "bookmark";
+
+    public static final String ROOT_ID_FS = "sdcard";
 
     private static final String DIR_ROOT = "/";
 
@@ -314,10 +317,34 @@ public class ExternalStorageProvider extends StorageProvider {
     }
 
     private void includeOtherRoot() {
+        try {
+            final String rootId = ROOT_ID_FS;
+            final File path = new File("/sdcard");
+            Log.d(TAG,"After includeOtherRoot "+path.getAbsolutePath());
+            final RootInfo root = new RootInfo();
+            mRoots.put(rootId, root);
+
+            root.rootId = rootId;
+            root.flags = Root.FLAG_LOCAL_ONLY | Root.FLAG_ADVANCED
+                    | Root.FLAG_SUPER_ADVANCED | Root.FLAG_SUPPORTS_SEARCH ;
+            if (isEmpty(path)) {
+                root.flags |= Root.FLAG_EMPTY;
+            }
+            root.title = getContext().getString(R.string.root_device_fs);
+            root.path = path;
+            root.docId = getDocIdForFile(path);
+
+            Log.d(TAG, "After updating volumes, found " + root.title + "");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     	try {
             final String rootId = ROOT_ID_DEVICE;
             final File path = Utils.hasNougat() ? Environment.getRootDirectory() : new File(DIR_ROOT);
-
+            //final File path = new File(DIR_ROOT);
+            Log.d(TAG,"After includeOtherRoot "+path.getAbsolutePath());
             final RootInfo root = new RootInfo();
             mRoots.put(rootId, root);
 
@@ -330,6 +357,9 @@ public class ExternalStorageProvider extends StorageProvider {
             root.title = getContext().getString(R.string.root_device_storage);
             root.path = path;
             root.docId = getDocIdForFile(path);
+
+            Log.d(TAG, "After updating volumes, found " + root.title + "");
+
         } catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -575,6 +605,7 @@ public class ExternalStorageProvider extends StorageProvider {
     private RootInfo getRootFromDocId(String docId) throws FileNotFoundException {
         final int splitIndex = docId.indexOf(':', 1);
         final String tag = docId.substring(0, splitIndex);
+        Log.d(TAG,"After root-tag "+tag);
 
         RootInfo root;
         synchronized (mRootsLock) {
@@ -583,6 +614,8 @@ public class ExternalStorageProvider extends StorageProvider {
         if (root == null) {
             throw new FileNotFoundException("No root for " + tag);
         }
+
+        Log.d(TAG,"After root-path "+root.path.getAbsolutePath());
 
         return root;
     }
@@ -615,6 +648,7 @@ public class ExternalStorageProvider extends StorageProvider {
         }
 
         DocumentFile documentFile = getDocumentFile(docId, file);
+        Log.d(TAG,"After get file " + file.getAbsolutePath());
 
         int flags = 0;
 
@@ -672,6 +706,7 @@ public class ExternalStorageProvider extends StorageProvider {
 
     @Override
     public Cursor queryRoots(String[] projection) throws FileNotFoundException {
+
         final MatrixCursor result = new MatrixCursor(resolveRootProjection(projection));
         synchronized (mRootsLock) {
             for (RootInfo root : mRoots.values()) {
@@ -685,7 +720,8 @@ public class ExternalStorageProvider extends StorageProvider {
                         || root.rootId.startsWith(ROOT_ID_SECONDARY)
                         || root.rootId.startsWith(ROOT_ID_DEVICE)) {
                     final File file = root.rootId.startsWith(ROOT_ID_DEVICE)
-                            ? Environment.getRootDirectory() : root.path;
+                            ? root.path /*Environment.getRootDirectory() */: root.path;
+                    if(root.path!=null) Log.d("Expand","After queryRoots "+file.getAbsolutePath());
                     row.add(Root.COLUMN_AVAILABLE_BYTES, file.getFreeSpace());
                     row.add(Root.COLUMN_CAPACITY_BYTES, file.getTotalSpace());
                 }

@@ -1,5 +1,8 @@
 package dev.dworks.apps.anexplorer.ui;
 
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isTelevision;
+import static dev.dworks.apps.anexplorer.misc.Utils.INTERSTITIAL_APP_UNIT_ID;
+
 import android.content.Context;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -17,9 +20,6 @@ import com.google.android.gms.ads.InterstitialAd;
 import dev.dworks.apps.anexplorer.AppPaymentFlavour;
 import dev.dworks.apps.anexplorer.R;
 import dev.dworks.apps.anexplorer.misc.CrashReportingManager;
-
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isTelevision;
-import static dev.dworks.apps.anexplorer.misc.Utils.INTERSTITIAL_APP_UNIT_ID;
 
 
 /**
@@ -50,9 +50,9 @@ public class AdWrapper extends FrameLayout {
         //Ads
         if(!isTelevision()){
             LayoutInflater.from(context).inflate(R.layout.ads_wrapper, this, true);
-            initAd();
-            mInterstitialAd = new InterstitialAd(context);
-            initInterstitialAd();
+            //initAd();
+            //mInterstitialAd = new InterstitialAd(context);
+            //initInterstitialAd();
         }
     }
 

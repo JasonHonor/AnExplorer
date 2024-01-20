@@ -2,6 +2,7 @@ package dev.dworks.apps.anexplorer.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,7 @@ public class RootsAdapter extends ArrayAdapter<Item> {
         final List<RootInfo> bookmarks = new ArrayList<>();
 
         for (RootInfo root : roots) {
+            Log.d("RootsAdapter","After check root "+root.path);
             if (root.isRecents()) {
                 recents = new RootItem(root, defaultColor);
             } else if (root.isBluetoothFolder() || root.isDownloadsFolder() || root.isAppBackupFolder()) {
