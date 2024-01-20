@@ -1,16 +1,5 @@
 package dev.dworks.apps.anexplorer.receiver;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-
-import dev.dworks.apps.anexplorer.misc.ConnectionUtils;
-import dev.dworks.apps.anexplorer.misc.NotificationUtils;
-import dev.dworks.apps.anexplorer.service.ConnectionsService;
-import dev.dworks.apps.anexplorer.service.TransferService;
-import dev.dworks.apps.anexplorer.transfer.TransferHelper;
-
 import static dev.dworks.apps.anexplorer.misc.ConnectionUtils.ACTION_FTPSERVER_STARTED;
 import static dev.dworks.apps.anexplorer.misc.ConnectionUtils.ACTION_FTPSERVER_STOPPED;
 import static dev.dworks.apps.anexplorer.misc.ConnectionUtils.ACTION_START_FTPSERVER;
@@ -18,6 +7,16 @@ import static dev.dworks.apps.anexplorer.misc.ConnectionUtils.ACTION_STOP_FTPSER
 import static dev.dworks.apps.anexplorer.misc.NotificationUtils.FTP_NOTIFICATION_ID;
 import static dev.dworks.apps.anexplorer.transfer.TransferHelper.ACTION_START_LISTENING;
 import static dev.dworks.apps.anexplorer.transfer.TransferHelper.ACTION_STOP_LISTENING;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+
+import dev.dworks.apps.anexplorer.misc.NotificationUtils;
+import dev.dworks.apps.anexplorer.service.ConnectionsService;
+import dev.dworks.apps.anexplorer.service.TransferService;
+import dev.dworks.apps.anexplorer.transfer.TransferHelper;
 
 public class ConnectionsReceiver extends BroadcastReceiver {
 
@@ -30,14 +29,14 @@ public class ConnectionsReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         if (ACTION_START_FTPSERVER.equals(action)) {
-            Intent serverService = new Intent(context, ConnectionsService.class);
+            /*Intent serverService = new Intent(context, ConnectionsService.class);
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 serverService.putExtras(extras);
             }
             if (!ConnectionUtils.isServerRunning(context)) {
                 context.startService(serverService);
-            }
+            }*/
         } else if (ACTION_STOP_FTPSERVER.equals(action)) {
             Intent serverService = new Intent(context, ConnectionsService.class);
             Bundle extras = intent.getExtras();
