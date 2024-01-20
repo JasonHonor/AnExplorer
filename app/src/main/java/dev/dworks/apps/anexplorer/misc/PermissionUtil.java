@@ -19,6 +19,8 @@ package dev.dworks.apps.anexplorer.misc;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -64,8 +66,18 @@ public class PermissionUtil {
     }
 
     public static boolean hasStoragePermission(Activity activity){
-        return ActivityCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //判断是否有管理外部存储的权限
+            if (!Environment.isExternalStorageManager()) {
+                //TODO 跳转到权限页，请求权限
+                return false;
+            }else {
+                return true;
+            }
+        }else {
+            return ActivityCompat.checkSelfPermission(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED;
+        }
     }
 }

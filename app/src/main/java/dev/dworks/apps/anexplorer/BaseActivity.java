@@ -15,14 +15,21 @@
  */
 package dev.dworks.apps.anexplorer;
 
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isWatch;
+import static dev.dworks.apps.anexplorer.model.RootInfo.openRoot;
+
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -30,18 +37,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.ArrayMap;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.MediaQueue;
 
 import java.util.List;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.Nullable;
-import androidx.collection.ArrayMap;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import dev.dworks.apps.anexplorer.cast.Casty;
 import dev.dworks.apps.anexplorer.common.ActionBarActivity;
 import dev.dworks.apps.anexplorer.misc.PermissionUtil;
@@ -53,10 +62,6 @@ import dev.dworks.apps.anexplorer.model.DurableUtils;
 import dev.dworks.apps.anexplorer.model.RootInfo;
 import dev.dworks.apps.anexplorer.provider.ExternalStorageProvider;
 import dev.dworks.apps.anexplorer.server.WebServer;
-
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isWatch;
-import static dev.dworks.apps.anexplorer.model.RootInfo.openRoot;
 
 public abstract class BaseActivity extends ActionBarActivity {
     public static final String TAG = "Documents";
@@ -225,11 +230,29 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static String[] storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final int REQUEST_STORAGE = 47;
 
+    private void goManagerFileAccess(AppCompatActivity activity) {
+        // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Intent appIntent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            appIntent.setData(Uri.parse("package:" + getPackageName()));
+            //appIntent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+            try {
+                activity.startActivity(appIntent);
+            } catch (ActivityNotFoundException ex) {
+                ex.printStackTrace();
+                Intent allFileIntent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                activity.startActivity(allFileIntent);
+            }
+        }
+    }
+
+
     protected void requestStoragePermissions() {
         if(PermissionUtil.hasStoragePermission(this)) {
             again();
         } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_MEDIA_AUDIO)) {
                 Utils.showPermanentRetrySnackBar(this, "Storage permissions are needed for Exploring.", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -252,7 +275,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                     again();
                 } else {
                     Utils.showRetrySnackBar(this, "Permission grating failed", null);
-                    requestStoragePermissions();
+                    //requestStoragePermissions();
+                    //Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    //intent.setData(Uri.parse("package:"+this.getPackageName()));
+                    //startActivity(intent);
+                    goManagerFileAccess(this);
                 }
                 return;
             }

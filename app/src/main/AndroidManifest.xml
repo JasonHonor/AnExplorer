@@ -9,7 +9,12 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.MANAGE_DOCUMENT" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Android11额外添加 -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -58,7 +63,7 @@
 
         <!-- TODO: allow rotation when state saving is in better shape -->
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".DocumentsActivity"
             android:theme="@style/DocumentsTheme.Splash"
             android:launchMode="singleTask">
@@ -133,14 +138,14 @@
                 android:value="true" />
         </activity>
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".StandaloneActivity"
             android:theme="@style/DocumentsTheme.Document" >
             <meta-data android:name="WindowManagerPreference:SuppressWindowControlNavigationButton"
                 android:value="true" />
         </activity>
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".setting.SettingsActivity"
             android:label="@string/menu_settings"
             android:theme="@style/DocumentsTheme.Setting" >
@@ -148,7 +153,7 @@
                 android:value="true" />
         </activity>
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".AboutActivity"
             android:label="About"
             android:theme="@style/DocumentsTheme.Document" >
@@ -156,7 +161,7 @@
                 android:value="true" />
         </activity>
 
-        <receiver android:name=".receiver.PackageReceiver" android:exported="false">
+        <receiver android:name=".receiver.PackageReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
@@ -164,7 +169,7 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.MountReceiver" android:exported="false">
+        <receiver android:name=".receiver.MountReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />
                 <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
@@ -177,7 +182,7 @@
         </receiver>
 
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".NoteActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="sensor"
@@ -197,7 +202,7 @@
         <receiver
             android:name=".receiver.ConnectionsReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="${applicationId}.action.START_FTPSERVER" />
                 <action android:name="${applicationId}.action.STOP_FTPSERVER" />
@@ -211,9 +216,9 @@
         <service
             android:name=".service.ConnectionsService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true" />
         <service
-            android:exported="false"
+            android:exported="true"
             android:name=".service.ServerTileService"
             android:icon="@drawable/ic_root_server"
             android:label="@string/toggle_messages"
@@ -224,7 +229,7 @@
         </service>
 
         <service
-            android:exported="false"
+            android:exported="true"
             android:name=".service.TransferTileService"
             android:icon="@drawable/ic_root_transfer"
             android:label="@string/transfer_toggle_messages"
@@ -237,7 +242,7 @@
         <provider
             android:name="dev.dworks.apps.anexplorer.provider.ContentProvider"
             android:authorities="${applicationId}.roots"
-            android:exported="false"
+            android:exported="true"
             android:enabled="true"/>
 
         <provider
@@ -304,7 +309,7 @@
         <provider
             android:name="dev.dworks.apps.anexplorer.provider.HeatMapProvider"
             android:authorities="${applicationId}.heatmap.documents"
-            android:exported="false"
+            android:exported="true"
             android:enabled="false"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENT">
@@ -315,7 +320,7 @@
         <provider
             android:name="dev.dworks.apps.anexplorer.provider.DownloadStorageProvider"
             android:authorities="${applicationId}.downloads.documents"
-            android:exported="false"
+            android:exported="true"
             android:enabled="false"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENT">
@@ -328,7 +333,7 @@
             android:name="dev.dworks.apps.anexplorer.provider.ExplorerProvider"
             android:authorities="${applicationId}.explorer"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true" />
 
         <provider
             android:name="dev.dworks.apps.anexplorer.provider.UsbStorageProvider"
@@ -391,7 +396,7 @@
         </activity>
 
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".cast.ExpandedControlsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -401,7 +406,7 @@
         </activity>
 
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".ShareDeviceActivity"
             android:label="@string/activity_share"
             android:theme="@style/DocumentsTheme.Note">
@@ -420,7 +425,7 @@
         <service
             android:name=".service.TransferService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="true"/>
 
     </application>
 
