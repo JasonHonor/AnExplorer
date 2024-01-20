@@ -106,6 +106,12 @@ android {
     lintOptions {
         abortOnError false
     }
+    ndkVersion '25.2.9519653'
+    buildToolsVersion '30.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
@@ -151,6 +157,6 @@ android.signingConfigs.release.keyAlias props.keyAlias
 android.signingConfigs.release.keyPassword props.keyAliasPassword
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Free")) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'io.fabric'
+    //apply plugin: 'com.google.gms.google-services'
+    //apply plugin: 'io.fabric'
 }
