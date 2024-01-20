@@ -5,6 +5,7 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <application tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:exported="false"
             android:name="dev.dworks.apps.anexplorer.PurchaseActivity"
             android:theme="@style/DocumentsTheme.Document" />
         <meta-data

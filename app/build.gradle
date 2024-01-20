@@ -145,10 +145,10 @@ dependencies {
     debugImplementation 'androidx.multidex:multidex:2.0.1'
 }
 
-//android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
-//android.signingConfigs.release.storePassword props.keyStorePassword
-//android.signingConfigs.release.keyAlias props.keyAlias
-//android.signingConfigs.release.keyPassword props.keyAliasPassword
+android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
+android.signingConfigs.release.storePassword props.keyStorePassword
+android.signingConfigs.release.keyAlias props.keyAlias
+android.signingConfigs.release.keyPassword props.keyAliasPassword
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Free")) {
     //apply plugin: 'com.google.gms.google-services'
