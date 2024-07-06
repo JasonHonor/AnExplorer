@@ -146,7 +146,7 @@ dependencies {
     wearCompileOnly 'com.google.android.wearable:wearable:2.5.0'
 
     televisionImplementation 'androidx.leanback:leanback:1.0.0'
-    televisionImplementation 'androidx.preference:preference:1.1.0'
+    televisionImplementation 'androidx.preference:preference:1.2.0'
     televisionImplementation 'androidx.leanback:leanback-preference:1.0.0'
 
     debugImplementation 'androidx.multidex:multidex:2.0.1'
