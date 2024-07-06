@@ -16,6 +16,9 @@
 
 package dev.dworks.apps.anexplorer.misc;
 
+import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
+import static dev.dworks.apps.anexplorer.fragment.HomeFragment.ROOTS_CHANGED;
+
 import android.annotation.TargetApi;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -57,7 +60,6 @@ import dev.dworks.apps.anexplorer.model.RootInfo;
 import dev.dworks.apps.anexplorer.network.NetworkConnection;
 import dev.dworks.apps.anexplorer.provider.AppsProvider;
 import dev.dworks.apps.anexplorer.provider.CloudStorageProvider;
-import dev.dworks.apps.anexplorer.provider.ContentProvider;
 import dev.dworks.apps.anexplorer.provider.DocumentsProvider;
 import dev.dworks.apps.anexplorer.provider.ExternalStorageProvider;
 import dev.dworks.apps.anexplorer.provider.ExtraDocumentsProvider;
@@ -67,9 +69,6 @@ import dev.dworks.apps.anexplorer.provider.RecentsProvider;
 import dev.dworks.apps.anexplorer.provider.RootedStorageProvider;
 import dev.dworks.apps.anexplorer.provider.UsbStorageProvider;
 import dev.dworks.apps.anexplorer.transfer.TransferHelper;
-
-import static dev.dworks.apps.anexplorer.DocumentsApplication.isSpecialDevice;
-import static dev.dworks.apps.anexplorer.fragment.HomeFragment.ROOTS_CHANGED;
 
 /**
  * Cache of known storage backends and their roots.
@@ -336,6 +335,7 @@ public class RootsCache {
             cursor = client.query(rootsUri, null, null, null, null);
             while (cursor.moveToNext()) {
                 final RootInfo root = RootInfo.fromRootsCursor(authority, cursor);
+                if(root.path!=null) Log.d("RootCache","After load from cursor "+ root.path + " Id->"+root.rootId );
                 roots.add(root);
             }
         } catch (Exception e) {
